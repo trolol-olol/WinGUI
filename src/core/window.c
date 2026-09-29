@@ -3,27 +3,43 @@
 #include "wingui_internal.h"
 #include "utils.h"
 
+extern int g_wingui_windows;
+
+void wingui_quit(void);
+
 WINGUI_WINDOW* wingui_window_create(const TCHAR *title,int width,int height){
     HWND hwnd=CreateWindow(TEXT("WinGUIWindowClass"),
                            title,
                            WS_OVERLAPPEDWINDOW,
                            CW_USEDEFAULT,CW_USEDEFAULT,
                            width,height,
-                           NULL,NULL,wingui_internal_gate_get_instance(),NULL);
+                           NULL,NULL,wingui_internal_get_instance(),NULL);
     if (hwnd==NULL) return NULL;
     WINGUI_WINDOW *window=malloc(sizeof(WINGUI_WINDOW));
     if (window==NULL) return NULL;
     List *widgets=list_create(16);
-    if (widgets==NULL) return NULL;
+    if (widgets==NULL) {
+        free(window);
+        return NULL;
+    }
+    List *timers=list_create(8);
+    if (timers==NULL){
+        free(window);
+        list_free(widgets);
+        return NULL;
+    }
 
     window->hwnd=hwnd;
     window->title=title;
     window->widgets=widgets;
+    window->timers=timers;
+    window->widget_ctr=1;
+    window->timer_ctr=1;
 
     SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG_PTR)window);
 
-    wingui_internal_gate_change_win_count(1);
-    wingui_label_create(window,"",0,0,width,height,NULL,NULL);
+    g_wingui_windows++;
+    wingui_label_create(window,TEXT(""),0,0,width,height,NULL,NULL);
     return window;
 }
 
@@ -39,7 +55,6 @@ void wingui_window_destroy(WINGUI_WINDOW *window) {
         for (int i=0;i<window->widgets->count;i++) {
             WINGUI_WIDGET *w=window->widgets->items[i];
             if (w){
-                DestroyWindow(w->hwnd);
                 free(w);
             }
         }
@@ -47,6 +62,6 @@ void wingui_window_destroy(WINGUI_WINDOW *window) {
     }
 
     free(window);
-    wingui_internal_gate_change_win_count(-1);
-    if (wingui_internal_gate_get_win_count()==0) wingui_quit();
+    g_wingui_windows--;
+    if (g_wingui_windows==0) wingui_quit();
 }

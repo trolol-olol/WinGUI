@@ -3,18 +3,6 @@
 #include "wingui_internal.h"
 
 static HINSTANCE g_wingui_instance=NULL;
-static int g_wingui_windows=0;
-
-static WINGUI_WIDGET* wingui_internal_id2widget(WINGUI_WINDOW *window,int id){
-    WINGUI_WIDGET *widget;
-    for (int i=0;i<window->widgets->count;i++){
-        widget=list_get(window->widgets,i);
-        if (widget->id==(HMENU)id){
-            return widget;
-        }
-    }
-    return NULL;
-}
 
 static WINGUI_EVENT_TYPE wingui_internal_code2event_btn(int code){
     WINGUI_EVENT_TYPE event_type;
@@ -68,27 +56,15 @@ static WINGUI_EVENT_TYPE wingui_internal_code2event_lbox(int code){
 
 
 
-void wingui_internal_gate_set_instance(HINSTANCE inst){
+void wingui_internal_set_instance(HINSTANCE inst){
     g_wingui_instance=inst;
 }
 
-HINSTANCE wingui_internal_gate_get_instance(){
+HINSTANCE wingui_internal_get_instance(){
     return g_wingui_instance;
 }
 
-void wingui_internal_gate_set_win_count(int count){
-    g_wingui_windows=count;
-}
-
-void wingui_internal_gate_change_win_count(int d){
-    g_wingui_windows+=d;
-}
-
-int wingui_internal_gate_get_win_count(){
-    return g_wingui_windows;
-}
-
-WINGUI_EVENT_TYPE wingui_internal_gate_code2event(int code,WINGUI_WIDGET_TYPE type){
+WINGUI_EVENT_TYPE wingui_internal_code2event(int code,WINGUI_WIDGET_TYPE type){
     WINGUI_EVENT_TYPE event_type;
     switch (type){
         case BUTTON: event_type=wingui_internal_code2event_btn(code);break;
@@ -101,6 +77,24 @@ WINGUI_EVENT_TYPE wingui_internal_gate_code2event(int code,WINGUI_WIDGET_TYPE ty
     return event_type;
 }
 
-WINGUI_WIDGET* wingui_internal_gate_id2widget(WINGUI_WINDOW *window,int id){
-    return wingui_internal_id2widget(window,id);
+WINGUI_WIDGET* wingui_internal_id2widget(WINGUI_WINDOW *window,int id){
+    if (window==NULL || window->widgets==NULL) return NULL;
+    for (int i=0;i<window->widgets->count;i++){
+        WINGUI_WIDGET *widget=list_get(window->widgets,i);
+        if (widget->id==(HMENU)id){
+            return widget;
+        }
+    }
+    return NULL;
+}
+
+WINGUI_TIMER* wingui_internal_id2timer(WINGUI_WINDOW *window,UINT timer_id){
+    if (window==NULL || window->timers==NULL) return NULL;
+    for (int i=0;i<window->timers->count;i++){
+        WINGUI_TIMER *timer=list_get(window->timers,i);
+        if (timer->id==timer_id){
+            return timer;
+        }
+    }
+    return NULL;
 }

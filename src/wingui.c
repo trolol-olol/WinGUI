@@ -6,6 +6,12 @@
 #include "utils.h"
 
 static HBRUSH g_wingui_brush;
+int g_wingui_windows=0;
+
+void wingui_quit(void){
+    DeleteObject(g_wingui_brush);
+    PostQuitMessage(0);
+}
 
 static LRESULT CALLBACK wingui_internal_window_proc(HWND hwnd,UINT msg,WPARAM wParam,LPARAM lParam){
     WINGUI_WINDOW *window=(WINGUI_WINDOW*)GetWindowLongPtr(hwnd,GWLP_USERDATA);
@@ -14,14 +20,26 @@ static LRESULT CALLBACK wingui_internal_window_proc(HWND hwnd,UINT msg,WPARAM wP
         case WM_COMMAND:{
             int id=LOWORD(wParam);
             int code=HIWORD(wParam);
-            WINGUI_WIDGET *widget=wingui_internal_gate_id2widget(window,id);
+            WINGUI_WIDGET *widget=wingui_internal_id2widget(window,id);
 
 
             if (widget==NULL || widget->on_event==NULL) break;
 
 
-            widget->on_event(wingui_internal_gate_code2event(code,widget->type),widget,widget->callback_data);
+            widget->on_event(wingui_internal_code2event(code,widget->type),widget,widget->callback_data);
 
+            break;
+        }
+        case WM_TIMER:{
+            UINT id=wParam;
+            WINGUI_TIMER *timer=wingui_internal_id2timer(window,id);
+
+            if (timer==NULL) break;
+            WINGUI_TIMER_CALLBACK on_tick=timer->on_tick;
+            void *callback_data=timer->callback_data;
+            if (timer->is_onetime) wingui_delete_timer(window,id);
+
+            on_tick(callback_data);
             break;
         }
         case WM_DESTROY:
@@ -41,7 +59,7 @@ static LRESULT CALLBACK wingui_internal_window_proc(HWND hwnd,UINT msg,WPARAM wP
 }
 
 void wingui_init(HINSTANCE hInstance){
-    wingui_internal_gate_set_instance(hInstance);
+    wingui_internal_set_instance(hInstance);
     g_wingui_brush=CreateSolidBrush(RGB(255,255,255));
 
     WNDCLASS wc={0};
@@ -53,15 +71,10 @@ void wingui_init(HINSTANCE hInstance){
     RegisterClass(&wc);
 }
 
-void wingui_run(){
+void wingui_run(void){
     MSG msg;
     while(GetMessage(&msg,NULL,0,0)){
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-}
-
-void wingui_quit(){
-    DeleteObject(g_wingui_brush);
-    PostQuitMessage(0);
 }

@@ -33,20 +33,32 @@ typedef enum{
 } WINGUI_EVENT_TYPE;
 
 typedef struct WINGUI_WIDGET WINGUI_WIDGET;
-typedef void(*WINGUI_CALLBACK)(WINGUI_EVENT_TYPE,WINGUI_WIDGET*,void*);
+typedef struct WINGUI_TIMER WINGUI_TIMER;
+typedef void(*WINGUI_WIDGET_CALLBACK)(WINGUI_EVENT_TYPE,WINGUI_WIDGET*,void*);
+typedef void(*WINGUI_TIMER_CALLBACK)(void*);
 
 typedef struct{
     HWND hwnd;
     const TCHAR* title;
     List *widgets;
+    UINT widget_ctr;
+    List *timers;
+    UINT timer_ctr;
 } WINGUI_WINDOW;
 
 struct WINGUI_WIDGET{
     HWND hwnd;
     WINGUI_WIDGET_TYPE type;
     WINGUI_WINDOW *parent;
-    WINGUI_CALLBACK on_event;
+    WINGUI_WIDGET_CALLBACK on_event;
     HMENU id;
+    void *callback_data;
+};
+
+struct WINGUI_TIMER{
+    bool is_onetime;
+    UINT id;
+    WINGUI_TIMER_CALLBACK on_tick;
     void *callback_data;
 };
 
@@ -61,20 +73,20 @@ void wingui_window_destroy(WINGUI_WINDOW *window);
 WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,
                                     const TCHAR *class_name,int x,int y,int w,
                                     int h,DWORD style,WINGUI_WIDGET_TYPE type,
-                                    WINGUI_CALLBACK on_event,void *data);
+                                    WINGUI_WIDGET_CALLBACK on_event,void *data);
 
 WINGUI_WIDGET* wingui_button_create(WINGUI_WINDOW *parent,const TCHAR *text,int x,
-                                    int y,int w,int h,WINGUI_CALLBACK on_event,void *callback_data);
+                                    int y,int w,int h,WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 WINGUI_WIDGET* wingui_checkbox_create(WINGUI_WINDOW *parent,const TCHAR *text,int x,
-                                    int y,int w,int h,WINGUI_CALLBACK on_event,void *callback_data);
+                                    int y,int w,int h,WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 WINGUI_WIDGET* wingui_listbox_create(WINGUI_WINDOW *parent,int x,int y,int w,int h,
-                                     WINGUI_CALLBACK on_event,void *callback_data);
+                                     WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 WINGUI_WIDGET* wingui_label_create(WINGUI_WINDOW *parent,const TCHAR *text,int x,int y,
-                                   int w,int h,WINGUI_CALLBACK on_event,void *callback_data);
+                                   int w,int h,WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 WINGUI_WIDGET* wingui_entry_create(WINGUI_WINDOW *parent,int x,int y,int w,int h,
-                                   WINGUI_CALLBACK on_event,void *callback_data);
+                                   WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 WINGUI_WIDGET* wingui_textbox_create(WINGUI_WINDOW *parent,int x,int y,int w,int h,
-                                   WINGUI_CALLBACK on_event,void *callback_data);
+                                   WINGUI_WIDGET_CALLBACK on_event,void *callback_data);
 
 int wingui_widget_get_text_length(WINGUI_WIDGET *widget);
 int wingui_widget_get_text(WINGUI_WIDGET *widget,TCHAR *buf,int max_len);
@@ -95,6 +107,11 @@ int wingui_listbox_elem2index(WINGUI_WIDGET *widget,TCHAR *buf);
 int wingui_listbox_get_textlen(WINGUI_WIDGET *widget,int index);
 bool wingui_listbox_clear(WINGUI_WIDGET *widget);
 int wingui_listbox_getlen(WINGUI_WIDGET *widget);
+
+//Timers
+UINT wingui_set_timer(WINGUI_WINDOW *window,UINT delay,WINGUI_TIMER_CALLBACK on_tick,void *callback_data);
+bool wingui_delete_timer(WINGUI_WINDOW *window,UINT timer_id);
+bool wingui_after(WINGUI_WINDOW *window,UINT delay,WINGUI_TIMER_CALLBACK on_tick,void *callback_data);
 
 //Text
 

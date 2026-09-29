@@ -1,7 +1,7 @@
 #include <windows.h>
 #include "wingui.h"
 
-WINGUI_WIDGET* wingui_listbox_create(WINGUI_WINDOW *parent,int x,int y,int w,int h,WINGUI_CALLBACK on_event,void *callback_data){
+WINGUI_WIDGET* wingui_listbox_create(WINGUI_WINDOW *parent,int x,int y,int w,int h,WINGUI_WIDGET_CALLBACK on_event,void *callback_data){
     return wingui_widget_create(parent,NULL,TEXT("LISTBOX"),x,y,w,h,LBS_STANDARD,LISTBOX,on_event,callback_data);
 }
 

@@ -1,4 +1,5 @@
 #include "wingui.h"
+#include "messagebox.h"
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,10 +23,12 @@ void callback(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
         wingui_widget_resize(label,w,20);
         wingui_widget_set_text(label,buf);
         free(buf);
+        showerror(TEXT("CLICKED"),TEXT("HI"));
     }
+    showwarning(TEXT("EVENT"),TEXT("LOL"));
 }
 
-void callback2(WINGUI_EVENT_TYPE event,void *data){
+void callback2(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
     WINGUI_WIDGET *box=(WINGUI_WIDGET*)data;
     if (event==SELECT){
         int index=wingui_listbox_get_selindex(box);
@@ -33,7 +36,14 @@ void callback2(WINGUI_EVENT_TYPE event,void *data){
         TCHAR *buf=malloc(len);
         wingui_listbox_index2elem(box,buf,index);
         printf("%s\n",buf);
+        showinfo(TEXT("RLY"),TEXT("LOOOL"));
     }
+}
+
+void callback3(void *data){
+    WINGUI_WINDOW *window=(WINGUI_WINDOW*)data;
+    printf("HELLO FROM TIMER\n");
+    wingui_after(window,50,callback3,window);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdShow){
@@ -51,8 +61,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nC
     WINGUI_WIDGET *button=wingui_button_create(window,TEXT("Click"),100,200,40,20,callback,&pair);
     WINGUI_WIDGET *lbox=wingui_listbox_create(window,300,0,100,400,callback2,NULL);
     wingui_widget_set_callback_data(lbox,lbox);
-    wingui_listbox_add_elem(lbox,"Example");
-    wingui_listbox_add_elem(lbox,"Hi!");
+    wingui_listbox_add_elem(lbox,TEXT("Example"));
+    wingui_listbox_add_elem(lbox,TEXT("Hi!"));
+
+    UINT timer=wingui_set_timer(window,250,callback3,NULL);
+    wingui_delete_timer(window,timer);
+    wingui_after(window,50,callback3,window);
 
     wingui_window_show(window,nCmdShow);
 

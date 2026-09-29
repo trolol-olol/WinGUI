@@ -1,9 +1,9 @@
 #include <windows.h>
 #include "wingui.h"
 
-WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,const TCHAR *class_name,int x,int y,int w,int h,DWORD style,WINGUI_WIDGET_TYPE type,WINGUI_CALLBACK on_event, void *data){
+WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,const TCHAR *class_name,int x,int y,int w,int h,DWORD style,WINGUI_WIDGET_TYPE type,WINGUI_WIDGET_CALLBACK on_event, void *data){
     if (parent==NULL || parent->hwnd==NULL || parent->widgets==NULL) return NULL;
-    HMENU id=(HMENU)parent->widgets->count+1;
+    HMENU id=(HMENU)parent->widget_ctr;
 
     HWND hwnd=CreateWindow(class_name,
                            text,
@@ -21,6 +21,7 @@ WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,cons
     widget->id=id;
     widget->on_event=on_event;
     widget->callback_data=data;
+    parent->widget_ctr+=1;
     list_append(parent->widgets,widget);
     return widget;
 }
@@ -52,13 +53,12 @@ bool wingui_widget_set_text(WINGUI_WIDGET *widget,TCHAR *text){
 bool wingui_widget_resize(WINGUI_WIDGET *widget,int w,int h){
     if (widget==NULL || widget->hwnd==NULL) return false;
     if (w<0 || h<0) return false;
-    return !SetWindowPos(widget->hwnd,NULL,0,0,
+    return SetWindowPos(widget->hwnd,NULL,0,0,
                         w,h,SWP_NOMOVE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }
 
 bool wingui_widget_move(WINGUI_WIDGET *widget,int x,int y){
     if (widget==NULL || widget->hwnd==NULL) return false;
-    if (x<0 || y<0) return false;
     return SetWindowPos(widget->hwnd,NULL,x,y,
                         0,0,SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
 }

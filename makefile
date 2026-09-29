@@ -1,4 +1,4 @@
-CFLAGS=-Iinclude -Wall -Wextra -s
+CFLAGS=-Iinclude -Wall -Wextra -s -Wno-unused-parameter -Wno-unused-variable
 
 SRC=\
     src/utils.c \
@@ -7,6 +7,8 @@ SRC=\
     src/core/text.c \
     src/core/widget.c \
     src/core/window.c \
+	src/core/messagebox.c \
+	src/core/timer.c \
     src/widgets/button.c \
     src/widgets/checkbox.c \
     src/widgets/entry.c \
