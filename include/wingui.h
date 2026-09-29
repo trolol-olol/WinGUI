@@ -8,6 +8,11 @@
 
 #define wingui_widget_set_callback_data(widget,data) if((widget)) (widget)->callback_data=(data)
 
+#define WINGUI_FONT_BOLD 1
+#define WINGUI_FONT_ITALIC 2
+#define WINGUI_FONT_UNDERLINED 4
+#define WINGUI_FONT_STRIKED 8
+
 typedef enum{
     BUTTON,
     LABEL,
@@ -52,6 +57,7 @@ struct WINGUI_WIDGET{
     WINGUI_WINDOW *parent;
     WINGUI_WIDGET_CALLBACK on_event;
     HMENU id;
+    HFONT font;
     void *callback_data;
 };
 
@@ -70,6 +76,7 @@ void wingui_window_show(WINGUI_WINDOW *window,int type);
 void wingui_window_destroy(WINGUI_WINDOW *window);
 
 //Widgets
+
 WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,
                                     const TCHAR *class_name,int x,int y,int w,
                                     int h,DWORD style,WINGUI_WIDGET_TYPE type,
@@ -118,6 +125,12 @@ bool wingui_after(WINGUI_WINDOW *window,UINT delay,WINGUI_TIMER_CALLBACK on_tick
 SIZE wingui_text_get_size(TCHAR *text,int length);
 long wingui_text_get_width(TCHAR *text,int length);
 long wingui_text_get_height(TCHAR *text,int length);
+
+//Fonts
+
+HFONT wingui_create_font(const TCHAR *name,int size,int attributes);
+void wingui_set_font(WINGUI_WIDGET *widget,HFONT font);
+void wingui_reset_font(WINGUI_WIDGET *widget);
 
 //Misc
 

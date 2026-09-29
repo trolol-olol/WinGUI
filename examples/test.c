@@ -61,8 +61,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nC
     WINGUI_WIDGET *button=wingui_button_create(window,TEXT("Click"),100,200,40,20,callback,&pair);
     WINGUI_WIDGET *lbox=wingui_listbox_create(window,300,0,100,400,callback2,NULL);
     wingui_widget_set_callback_data(lbox,lbox);
-    wingui_listbox_add_elem(lbox,TEXT("Example"));
-    wingui_listbox_add_elem(lbox,TEXT("Hi!"));
+    wingui_listbox_add_elem(lbox,TEXT("Hi"));
+    wingui_listbox_add_elem(lbox,TEXT("Example!"));
+
+    HFONT font=wingui_create_font(TEXT("MS Serif"),12,15);
+    if (font==NULL) printf("NULL");
+    wingui_set_font(label,font);
 
     UINT timer=wingui_set_timer(window,250,callback3,NULL);
     wingui_delete_timer(window,timer);
