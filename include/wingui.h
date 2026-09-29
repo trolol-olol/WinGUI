@@ -123,8 +123,11 @@ bool wingui_after(WINGUI_WINDOW *window,UINT delay,WINGUI_TIMER_CALLBACK on_tick
 //Text
 
 SIZE wingui_text_get_size(TCHAR *text,int length);
+SIZE wingui_text_get_size_for(WINGUI_WIDGET *widget,TCHAR *text,int length);
 long wingui_text_get_width(TCHAR *text,int length);
+long wingui_text_get_width_for(WINGUI_WIDGET *widget,TCHAR *text,int length);
 long wingui_text_get_height(TCHAR *text,int length);
+long wingui_text_get_height_for(WINGUI_WIDGET *widget,TCHAR *text,int length);
 
 //Fonts
 

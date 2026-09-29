@@ -18,9 +18,8 @@ void callback(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
         TCHAR *buf=malloc(len+1);
         wingui_widget_get_text(entry,buf,len+1);
         puts(buf);
-        int w=wingui_text_get_width(buf,len);
-        wingui_widget_set_text(label,"");
-        wingui_widget_resize(label,w,20);
+        SIZE size=wingui_text_get_size_for(label,buf,len);
+        wingui_widget_resize(label,size.cx,size.cy);
         wingui_widget_set_text(label,buf);
         free(buf);
         showerror(TEXT("CLICKED"),TEXT("HI"));
@@ -53,6 +52,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nC
 
     WINGUI_WINDOW *window=wingui_window_create(TEXT("WinGUI Test Window"),400,300);
     WINGUI_WIDGET *label=wingui_label_create(window,TEXT("Hello!"),100,100,40,20,NULL,NULL);
+    HFONT font=wingui_create_font(TEXT("Arial"),36,0);
+    wingui_set_font(label,font);
     WINGUI_WIDGET *entry=wingui_entry_create(window,100,0,100,20,NULL,NULL);
 
     pair.entry=entry;
@@ -63,10 +64,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nC
     wingui_widget_set_callback_data(lbox,lbox);
     wingui_listbox_add_elem(lbox,TEXT("Hi"));
     wingui_listbox_add_elem(lbox,TEXT("Example!"));
-
-    HFONT font=wingui_create_font(TEXT("MS Serif"),12,15);
-    if (font==NULL) printf("NULL");
-    wingui_set_font(label,font);
 
     UINT timer=wingui_set_timer(window,250,callback3,NULL);
     wingui_delete_timer(window,timer);
