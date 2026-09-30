@@ -27,4 +27,5 @@ void wingui_reset_font(WINGUI_WIDGET *widget){
     if (widget==NULL) return;
     if (widget->font!=NULL) DeleteObject(widget->font);
     widget->font=NULL;
+    SendMessage(widget->hwnd,WM_SETFONT,(WPARAM)NULL,TRUE);
 }

@@ -49,7 +49,7 @@ void wingui_window_show(WINGUI_WINDOW *window,int type){
 }
 
 void wingui_window_destroy(WINGUI_WINDOW *window) {
-    if (window==NULL) return;
+    if (window==NULL || window->hwnd==NULL) return;
 
     if (window->widgets) {
         for (int i=0;i<window->widgets->count;i++) {
@@ -59,6 +59,16 @@ void wingui_window_destroy(WINGUI_WINDOW *window) {
             }
         }
         list_free(window->widgets);
+    }
+    if (window->timers){
+        for (int i=0;i<window->timers->count;i++){
+            WINGUI_TIMER *t=window->timers->items[i];
+            if (t){
+                KillTimer(window->hwnd,t->id);
+                free(t);
+            }
+        }
+        list_free(window->timers);
     }
 
     free(window);

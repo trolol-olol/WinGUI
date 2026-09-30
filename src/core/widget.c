@@ -13,16 +13,24 @@ WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,cons
                            parent->hwnd,id,NULL,NULL);
     if (hwnd==NULL) return NULL;
     WINGUI_WIDGET *widget=malloc(sizeof(WINGUI_WIDGET));
-    if (widget==NULL) return NULL;
+    if (widget==NULL){
+        DestroyWindow(hwnd);
+        return NULL;
+    }
 
     widget->hwnd=hwnd;
     widget->parent=parent;
     widget->type=type;
     widget->id=id;
+    widget->font=NULL;
     widget->on_event=on_event;
     widget->callback_data=data;
+    if (list_append(parent->widgets,widget)==-1) {
+        DestroyWindow(hwnd);
+        free(widget);
+        return NULL;
+    }
     parent->widget_ctr+=1;
-    list_append(parent->widgets,widget);
     return widget;
 }
 

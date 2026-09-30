@@ -10,6 +10,7 @@ typedef struct{
 } EntryAndLabel;
 
 void callback(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
+    printf("%d",event);
     if (event==CLICK){
         EntryAndLabel *pair=(EntryAndLabel*)data;
         WINGUI_WIDGET *entry=pair->entry;

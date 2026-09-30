@@ -5,11 +5,13 @@
 #include "wingui_internal.h"
 #include "utils.h"
 
-static HBRUSH g_wingui_brush;
+static HBRUSH g_wingui_brush=NULL;
 int g_wingui_windows=0;
+extern HDC g_wingui_text_dc;
 
 void wingui_quit(void){
     DeleteObject(g_wingui_brush);
+    DeleteDC(g_wingui_text_dc);
     PostQuitMessage(0);
 }
 
@@ -60,7 +62,7 @@ static LRESULT CALLBACK wingui_internal_window_proc(HWND hwnd,UINT msg,WPARAM wP
 
 void wingui_init(HINSTANCE hInstance){
     wingui_internal_set_instance(hInstance);
-    g_wingui_brush=CreateSolidBrush(RGB(255,255,255));
+    if (g_wingui_brush==NULL) g_wingui_brush=CreateSolidBrush(RGB(255,255,255));
 
     WNDCLASS wc={0};
     wc.lpfnWndProc=wingui_internal_window_proc;
