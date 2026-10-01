@@ -25,6 +25,7 @@ WINGUI_WIDGET* wingui_widget_create(WINGUI_WINDOW *parent,const TCHAR *text,cons
     widget->font=NULL;
     widget->on_event=on_event;
     widget->callback_data=data;
+    widget->enabled=true;
     if (list_append(parent->widgets,widget)==-1) {
         DestroyWindow(hwnd);
         free(widget);
@@ -69,4 +70,16 @@ bool wingui_widget_move(WINGUI_WIDGET *widget,int x,int y){
     if (widget==NULL || widget->hwnd==NULL) return false;
     return SetWindowPos(widget->hwnd,NULL,x,y,
                         0,0,SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+}
+
+void wingui_widget_disable(WINGUI_WIDGET *widget){
+    if (widget==NULL || widget->hwnd==NULL || widget->enabled==false) return;
+    widget->enabled=false;
+    EnableWindow(widget->hwnd,FALSE);
+}
+
+void wingui_widget_enable(WINGUI_WIDGET *widget){
+    if (widget==NULL || widget->hwnd==NULL || widget->enabled) return;
+    widget->enabled=true;
+    EnableWindow(widget->hwnd,TRUE);
 }

@@ -48,6 +48,9 @@ static LRESULT CALLBACK wingui_internal_window_proc(HWND hwnd,UINT msg,WPARAM wP
             wingui_window_destroy(window);
             return 0;
         case WM_CLOSE:
+            if (window->on_close!=NULL){
+                window->on_close(window,window->on_close_data);
+            }
             DestroyWindow(hwnd);
             return 0;
         case WM_CTLCOLORSTATIC:{
@@ -79,4 +82,9 @@ void wingui_run(void){
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
+}
+
+void wingui_on_close(WINGUI_WINDOW *window,WINGUI_WINDOW_CALLBACK callback,void *callback_data){
+    window->on_close=callback;
+    window->on_close_data=callback_data;
 }

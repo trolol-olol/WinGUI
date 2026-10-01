@@ -35,6 +35,8 @@ WINGUI_WINDOW* wingui_window_create(const TCHAR *title,int width,int height){
     window->timers=timers;
     window->widget_ctr=1;
     window->timer_ctr=1;
+    window->on_close=NULL;
+    window->on_close_data=NULL;
 
     SetWindowLongPtr(hwnd,GWLP_USERDATA,(LONG_PTR)window);
 

@@ -8,6 +8,7 @@ typedef struct{
     WINGUI_WIDGET *entry;
     WINGUI_WIDGET *label;
 } EntryAndLabel;
+bool enabled=true;
 
 void callback(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
     printf("%d",event);
@@ -24,6 +25,14 @@ void callback(WINGUI_EVENT_TYPE event,WINGUI_WIDGET *self,void *data){
         wingui_widget_set_text(label,buf);
         free(buf);
         showerror(TEXT("CLICKED"),TEXT("HI"));
+        if (enabled){
+            wingui_widget_disable(entry);
+            enabled=false;
+        }
+        else{
+            wingui_widget_enable(entry);
+            enabled=true;
+        }
     }
     showwarning(TEXT("EVENT"),TEXT("LOL"));
 }

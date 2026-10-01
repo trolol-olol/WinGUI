@@ -39,17 +39,21 @@ typedef enum{
 
 typedef struct WINGUI_WIDGET WINGUI_WIDGET;
 typedef struct WINGUI_TIMER WINGUI_TIMER;
+typedef struct WINGUI_WINDOW WINGUI_WINDOW;
 typedef void(*WINGUI_WIDGET_CALLBACK)(WINGUI_EVENT_TYPE,WINGUI_WIDGET*,void*);
 typedef void(*WINGUI_TIMER_CALLBACK)(void*);
+typedef void(*WINGUI_WINDOW_CALLBACK)(WINGUI_WINDOW*,void*);
 
-typedef struct{
+struct WINGUI_WINDOW{
     HWND hwnd;
     const TCHAR* title;
     List *widgets;
     UINT widget_ctr;
     List *timers;
     UINT timer_ctr;
-} WINGUI_WINDOW;
+    WINGUI_WINDOW_CALLBACK on_close;
+    void *on_close_data;
+};
 
 struct WINGUI_WIDGET{
     HWND hwnd;
@@ -59,6 +63,7 @@ struct WINGUI_WIDGET{
     HMENU id;
     HFONT font;
     void *callback_data;
+    bool enabled;
 };
 
 struct WINGUI_TIMER{
@@ -115,6 +120,9 @@ int wingui_listbox_get_textlen(WINGUI_WIDGET *widget,int index);
 bool wingui_listbox_clear(WINGUI_WIDGET *widget);
 int wingui_listbox_getlen(WINGUI_WIDGET *widget);
 
+void wingui_widget_enable(WINGUI_WIDGET *widget);
+void wingui_widget_disable(WINGUI_WIDGET *widget);
+
 //Timers
 UINT wingui_set_timer(WINGUI_WINDOW *window,UINT delay,WINGUI_TIMER_CALLBACK on_tick,void *callback_data);
 bool wingui_delete_timer(WINGUI_WINDOW *window,UINT timer_id);
@@ -139,5 +147,7 @@ void wingui_reset_font(WINGUI_WIDGET *widget);
 
 void wingui_run(void);
 void wingui_init(HINSTANCE hInstance);
+
+void wingui_on_close(WINGUI_WINDOW *window,WINGUI_WINDOW_CALLBACK callback,void *callback_data);
 
 #endif
