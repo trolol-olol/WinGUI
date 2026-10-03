@@ -62,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, LPSTR lpCmdLine, int nC
 
     WINGUI_WINDOW *window=wingui_window_create(TEXT("WinGUI Test Window"),400,300);
     WINGUI_WIDGET *label=wingui_label_create(window,TEXT("Hello!"),100,100,40,20,NULL,NULL);
-    HFONT font=wingui_create_font(TEXT("Arial"),36,0);
+    WINGUI_FONT *font=wingui_create_font(TEXT("Arial"),36,0);
     wingui_set_font(label,font);
     WINGUI_WIDGET *entry=wingui_entry_create(window,100,0,100,20,NULL,NULL);
 

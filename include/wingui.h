@@ -40,6 +40,7 @@ typedef enum{
 typedef struct WINGUI_WIDGET WINGUI_WIDGET;
 typedef struct WINGUI_TIMER WINGUI_TIMER;
 typedef struct WINGUI_WINDOW WINGUI_WINDOW;
+typedef struct WINGUI_FONT WINGUI_FONT;
 typedef void(*WINGUI_WIDGET_CALLBACK)(WINGUI_EVENT_TYPE,WINGUI_WIDGET*,void*);
 typedef void(*WINGUI_TIMER_CALLBACK)(void*);
 typedef void(*WINGUI_WINDOW_CALLBACK)(WINGUI_WINDOW*,void*);
@@ -61,7 +62,7 @@ struct WINGUI_WIDGET{
     WINGUI_WINDOW *parent;
     WINGUI_WIDGET_CALLBACK on_event;
     HMENU id;
-    HFONT font;
+    WINGUI_FONT *font;
     void *callback_data;
     bool enabled;
 };
@@ -71,6 +72,12 @@ struct WINGUI_TIMER{
     UINT id;
     WINGUI_TIMER_CALLBACK on_tick;
     void *callback_data;
+};
+
+struct WINGUI_FONT{
+    HFONT font;
+    int refctr;
+    bool external;
 };
 
 //Windows
@@ -139,9 +146,11 @@ long wingui_text_get_height_for(WINGUI_WIDGET *widget,TCHAR *text,int length);
 
 //Fonts
 
-HFONT wingui_create_font(const TCHAR *name,int size,int attributes);
-void wingui_set_font(WINGUI_WIDGET *widget,HFONT font);
+WINGUI_FONT* wingui_create_font(const TCHAR *name,int size,int attributes);
+WINGUI_FONT* wingui_font_from_hfont(HFONT font);
+void wingui_set_font(WINGUI_WIDGET *widget,WINGUI_FONT *font);
 void wingui_reset_font(WINGUI_WIDGET *widget);
+bool wingui_delete_font(WINGUI_FONT *font);
 
 //Misc
 

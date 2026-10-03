@@ -12,10 +12,12 @@ SIZE wingui_text_get_size_for(WINGUI_WIDGET *widget, TCHAR *text, int length){
     if (g_wingui_text_dc==NULL){
         return invalid;
     }
-    SelectObject(g_wingui_text_dc,widget->font);
+    SelectObject(g_wingui_text_dc,widget->font->font);
 
     SIZE size;
     BOOL result=GetTextExtentPoint32(g_wingui_text_dc,text,length,&size);
+
+    SelectObject(g_wingui_text_dc,NULL);
 
     return result ? size : invalid;
 }
